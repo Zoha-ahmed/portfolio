@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Persona Library: Case Study</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --text: #1a1a1a;
+    --muted: #555;
+    --faint: #888;
+    --border: #e4e4e0;
+    --surface: #f7f7f5;
+    --accent: #1a56a0;
+    --accent-light: #e8f0fb;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  body {
+    font-family: var(--font);
+    color: var(--text);
+    background: #fff;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  nav {
+    padding: 1.25rem 2rem;
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  nav a { color: var(--faint); text-decoration: none; font-size: 14px; }
+  nav a:hover { color: var(--text); }
+  nav span { color: var(--border); font-size: 14px; }
+  nav .current { color: var(--text); font-size: 14px; }
+
+  .page { max-width: 780px; margin: 0 auto; padding: 4rem 2rem 6rem; }
+
+  .hero-eyebrow {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: .75rem;
+  }
+  h1 {
+    font-size: 42px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -.02em;
+    margin-bottom: 1rem;
+  }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 620px;
+    margin-bottom: 2rem;
+  }
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 1.5rem 0;
+    border-top: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+    margin-bottom: 3rem;
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .meta-label { font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+  .meta-value { font-size: 14px; color: var(--text); }
+
+  .section { margin-bottom: 3.5rem; }
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: .5rem;
+  }
+  h2 {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    letter-spacing: -.01em;
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: .4rem;
+    color: var(--text);
+  }
+  p { color: var(--muted); margin-bottom: 1rem; }
+  p:last-child { margin-bottom: 0; }
+
+  .callout {
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    font-size: 15px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+  .card {
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .card-icon { font-size: 20px; margin-bottom: .75rem; color: var(--faint); }
+  .card p { font-size: 14px; color: var(--faint); margin: 0; }
+
+  .feature-list { list-style: none; padding: 0; margin: 1.25rem 0; }
+  .feature-list li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: .75rem 0;
+    border-bottom: 0.5px solid var(--border);
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-num {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    min-width: 24px;
+    padding-top: 3px;
+  }
+
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin: 1.5rem 0; }
+  .step {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  .step-num { font-size: 11px; font-weight: 500; color: var(--faint); margin-bottom: .5rem; letter-spacing: .04em; }
+  .step h3 { font-size: 13px; margin-bottom: .25rem; }
+  .step p { font-size: 12px; color: var(--faint); margin: 0; line-height: 1.5; }
+
+  .decision { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 0.5px solid var(--border); }
+  .decision:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+
+  .figma-mock {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .mock-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+    padding-bottom: .75rem;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .mock-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+  .mock-dot.red { background: #f08080; }
+  .mock-dot.yellow { background: #f0d080; }
+  .mock-dot.green { background: #80c080; }
+  .mock-title { font-size: 12px; color: var(--faint); margin-left: auto; }
+
+  .persona-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
+  .persona-card {
+    background: #fff;
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: .875rem;
+  }
+  .persona-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: .625rem;
+  }
+  .avatar-blue { background: #dbeafe; color: #1e40af; }
+  .avatar-green { background: #d1fae5; color: #065f46; }
+  .avatar-purple { background: #ede9fe; color: #5b21b6; }
+  .avatar-orange { background: #fed7aa; color: #92400e; }
+  .avatar-rose { background: #ffe4e6; color: #9f1239; }
+  .avatar-teal { background: #ccfbf1; color: #134e4a; }
+  .persona-role { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .persona-dept { font-size: 11px; color: var(--faint); margin-bottom: .5rem; }
+  .persona-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    background: var(--surface);
+    color: var(--faint);
+    margin-right: 3px;
+  }
+
+  .chat-mock {
+    background: #fff;
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+  .chat-header {
+    background: var(--accent);
+    color: #fff;
+    padding: .75rem 1rem;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .chat-online { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; }
+  .chat-body { padding: 1rem; display: flex; flex-direction: column; gap: .75rem; }
+  .chat-msg {
+    max-width: 80%;
+    padding: .625rem .875rem;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .chat-msg.user {
+    background: var(--accent);
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-right-radius: 3px;
+  }
+  .chat-msg.bot {
+    background: var(--surface);
+    color: var(--muted);
+    align-self: flex-start;
+    border-bottom-left-radius: 3px;
+  }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 1rem .75rem; }
+  .chip {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 0.5px solid var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  hr { border: none; border-top: 0.5px solid var(--border); margin: 3.5rem 0; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: 0.5px solid var(--border);
+    color: var(--text);
+  }
+  .btn:hover { background: var(--surface); }
+  .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .link-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 28px; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; }
+    .persona-grid { grid-template-columns: 1fr 1fr; }
+    .meta-row { gap: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/">Portfolio</a>
+  <span>/</span>
+  <span class="current">Persona Library</span>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <p class="hero-eyebrow">Case Study</p>
+  <h1>Persona Library</h1>
+  <p class="hero-sub">An AI-powered enterprise tool that turns scattered persona documents into a searchable, interactive library with a built-in chatbot for natural language discovery.</p>
+
+  <div class="meta-row">
+    <div class="meta-item">
+      <span class="meta-label">My role</span>
+      <span class="meta-value">Solo designer and builder</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Type</span>
+      <span class="meta-value">Personal concept, fully built prototype</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Tools</span>
+      <span class="meta-value">Figma &middot; React &middot; AI/LLM integration</span>
+    </div>
+  </div>
+
+  <!-- PROBLEM -->
+  <div class="section">
+    <p class="section-eyebrow">The problem</p>
+    <h2>Persona docs existed. Nobody could find them.</h2>
+    <p>During my internship at Pfizer, I ran into a problem that felt universal: persona documentation existed, but it was buried in shared drives, scattered across decks, and genuinely annoying to access. When someone needed to understand a user role, they either dug through files for a while or just guessed.</p>
+    <p>The information was there. The problem was access and discoverability. I wanted to build something that fixed that without requiring anyone to change how they work.</p>
+  </div>
+
+  <hr>
+
+  <!-- INSIGHT -->
+  <div class="section">
+    <p class="section-eyebrow">The insight</p>
+    <h2>A library, not a document</h2>
+    <p>The shift I wanted to make was simple: instead of personas living as static files, what if they lived in a browsable, searchable interface, more like a product catalog than a shared drive? Something you could open, scan, and explore, where finding the right persona took seconds instead of minutes.</p>
+
+    <div class="callout">
+      The problem was not that personas were poorly written. The problem was that the format, a document buried somewhere, made them hard to find and harder to use at the moment you actually needed them.
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- PROCESS -->
+  <div class="section">
+    <p class="section-eyebrow">Process</p>
+    <h2>Concept to working prototype</h2>
+    <p>I designed and built this iteratively, testing and refining as I went. The design started in Figma, then moved into a React prototype that I kept adjusting based on how it actually felt to use.</p>
+
+    <div class="steps">
+      <div class="step">
+        <p class="step-num">01</p>
+        <h3>Identify the gap</h3>
+        <p>Mapped the real friction from my internship experience: personas existed but were not accessible when teams needed them</p>
+      </div>
+      <div class="step">
+        <p class="step-num">02</p>
+        <h3>Design in Figma</h3>
+        <p>Designed the card layout, library view, flip interaction, and chatbot UI before touching code</p>
+      </div>
+      <div class="step">
+        <p class="step-num">03</p>
+        <h3>Build and iterate</h3>
+        <p>Built the prototype in React, tested it, and made changes iteratively until the interactions felt right</p>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- WHAT I BUILT -->
+  <div class="section">
+    <p class="section-eyebrow">What I built</p>
+    <h2>Six personas, three core features</h2>
+    <p>The prototype has 6 personas covering different organizational roles. Each is presented as a card in a browsable library. Three things make it work beyond a basic list.</p>
+
+    <ul class="feature-list">
+      <li>
+        <span class="feature-num">01</span>
+        <div><strong style="color: var(--text);">Card-based library with flip interaction.</strong> Each persona is a card showing role, department, tier, location, and a user story. Clicking flips the card to reveal deeper details. Progressive disclosure keeps the surface clean without hiding information.</div>
+      </li>
+      <li>
+        <span class="feature-num">02</span>
+        <div><strong style="color: var(--text);">Intelligent search.</strong> Search uses intelligent matching throughout, so users can find personas without needing to know exact role titles or department names. This matters most when you are new to an organization and do not know how things are structured.</div>
+      </li>
+      <li>
+        <span class="feature-num">03</span>
+        <div><strong style="color: var(--text);">AI chatbot assistant.</strong> A persistent chat panel lets users ask questions in plain language: "which personas work in QA," "what are the pain points for a lab analyst," or "how do I create a persona." The chatbot returns structured answers including full persona cards when relevant, and suggests follow-up questions to guide exploration.</div>
+      </li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <!-- LIBRARY MOCKUP -->
+  <div class="section">
+    <p class="section-eyebrow">Design</p>
+    <h2>The library view</h2>
+    <p>The card layout is the core of the experience. Six personas, each scannable at a glance, with the depth available one click away.</p>
+
+    <div class="figma-mock">
+      <div class="mock-header">
+        <div class="mock-dot red"></div>
+        <div class="mock-dot yellow"></div>
+        <div class="mock-dot green"></div>
+        <span class="mock-title">Persona Library</span>
+      </div>
+      <div class="persona-grid">
+        <div class="persona-card">
+          <div class="persona-avatar avatar-blue">QA</div>
+          <p class="persona-role">QA Analyst</p>
+          <p class="persona-dept">Quality Assurance</p>
+          <span class="persona-tag">Lead</span>
+          <span class="persona-tag">Lab</span>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar avatar-green">PM</div>
+          <p class="persona-role">Product Manager</p>
+          <p class="persona-dept">Digital Products</p>
+          <span class="persona-tag">Lead</span>
+          <span class="persona-tag">Remote</span>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar avatar-purple">DA</div>
+          <p class="persona-role">Data Analyst</p>
+          <p class="persona-dept">Analytics</p>
+          <span class="persona-tag">Participant</span>
+          <span class="persona-tag">Hybrid</span>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar avatar-orange">SC</div>
+          <p class="persona-role">Supply Chain Lead</p>
+          <p class="persona-dept">Operations</p>
+          <span class="persona-tag">Lead</span>
+          <span class="persona-tag">On-site</span>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar avatar-rose">RD</div>
+          <p class="persona-role">R&amp;D Scientist</p>
+          <p class="persona-dept">Research</p>
+          <span class="persona-tag">Participant</span>
+          <span class="persona-tag">Lab</span>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar avatar-teal">IT</div>
+          <p class="persona-role">IT Systems Admin</p>
+          <p class="persona-dept">Technology</p>
+          <span class="persona-tag">Participant</span>
+          <span class="persona-tag">Remote</span>
+        </div>
+      </div>
+    </div>
+    <p style="font-size: 12px; color: var(--faint); text-align: center; margin-top: .6rem;">Six personas, each scannable by role, department, tier, and location</p>
+  </div>
+
+  <hr>
+
+  <!-- CHATBOT -->
+  <div class="section">
+    <p class="section-eyebrow">AI feature</p>
+    <h2>The chatbot as a search interface</h2>
+    <p>The chatbot is the part I am most proud of. The idea was simple: not everyone knows how to navigate a persona library, especially in a large organization where you might not know what roles exist or how they are named. Natural language search removes that barrier entirely.</p>
+    <p>The panel lives in the bottom-right corner of the screen, accessible without leaving the library view. Quick-action chips guide new users. Free text handles everything else.</p>
+
+    <div class="chat-mock">
+      <div class="chat-header">
+        <div class="chat-online"></div>
+        Persona Assistant
+      </div>
+      <div class="chat-body">
+        <div class="chat-msg bot">Hi! I can help you find personas, explore pain points, or create new ones. What are you looking for?</div>
+        <div class="chip-row">
+          <span class="chip">Lab personas</span>
+          <span class="chip">Pain points</span>
+          <span class="chip">QA Analyst</span>
+          <span class="chip">Create persona</span>
+        </div>
+        <div class="chat-msg user">What are the pain points for the QA Analyst?</div>
+        <div class="chat-msg bot">The QA Analyst struggles with fragmented test data across systems, manual reporting that slows release cycles, and limited visibility into upstream dependencies. Want me to pull up the full persona card?</div>
+      </div>
+    </div>
+    <p style="font-size: 12px; color: var(--faint); text-align: center; margin-top: .6rem;">The chatbot returns structured answers and surfaces full persona cards on request</p>
+  </div>
+
+  <hr>
+
+  <!-- KEY DECISIONS -->
+  <div class="section">
+    <p class="section-eyebrow">Key design decisions</p>
+    <h2>Why it works the way it does</h2>
+
+    <div class="decision">
+      <h3>Cards over documents</h3>
+      <p>The whole premise is that a document is the wrong format for persona information. Cards are scannable, browsable, and feel like a product rather than a file. The flip interaction means you can get a quick read without committing to reading everything, which is how people actually use this kind of information.</p>
+    </div>
+
+    <div class="decision">
+      <h3>Intelligent matching throughout</h3>
+      <p>Rather than making users choose between a basic and advanced mode, search always uses intelligent matching. Someone new to an organization who needs to find "the person who handles manufacturing compliance" does not know what that role is called. Intelligent matching means they do not have to.</p>
+    </div>
+
+    <div class="decision">
+      <h3>Chatbot as entry point, not replacement</h3>
+      <p>The chatbot is not meant to replace the library. It is meant to lower the barrier for people who find structured interfaces intimidating or who just want a quick answer. The two modes work together: the chatbot gets you to the right persona, the library lets you explore it.</p>
+    </div>
+
+    <div class="decision">
+      <h3>Suggestion chips for new users</h3>
+      <p>The quick-action chips in the chatbot solve a real problem: when someone opens a blank chat interface, they often do not know what to type. The chips give new users a starting point and implicitly teach them what the system can do. They disappear once the user starts typing, so they do not get in the way of experienced users.</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- REFLECTION -->
+  <div class="section">
+    <p class="section-eyebrow">Reflection</p>
+    <h2>What I learned</h2>
+    <p>This project started from a real frustration, not a brief. That made the problem feel concrete in a way that kept me grounded throughout the design process. Every decision came back to the same question: would this have helped me when I was at Pfizer trying to find the right person to talk to?</p>
+    <p>Building it iteratively and testing as I went also changed how I think about prototyping. A lot of interactions that seemed obvious in Figma felt wrong once they were live. The flip animation on the cards took several iterations to feel right. The chatbot chip layout went through three versions before it stopped feeling cluttered. The final prototype is the result of using it, not just designing it.</p>
+
+    <div class="callout">
+      The design insight that stuck with me most is that the format of information shapes whether people actually use it. The personas at Pfizer were not bad. They were just in the wrong container.
+    </div>
+  </div>
+
+  <!-- LINKS -->
+  <div class="link-row">
+    <a class="btn btn-primary" href="https://www.figma.com/design/eP3xTvEIRzbTaJpRsFU5vg/Persona-Library" target="_blank">View Figma designs</a>
+  </div>
+
+</div>
+</body>
+</html>
